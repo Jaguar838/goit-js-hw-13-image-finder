@@ -4,21 +4,37 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Countries</title>
+    <title>Image finder</title>
   </head>
 
   <body>
-    <div class="input-box">
-      <input
-        type="text"
-        name="search"
-        id="input"
-        class="input"
-        placeholder="Введите название страны"
-      />
-      <p class="input-message"></p>
-      <ul class="input-list"></ul>
+    <div class="container">
+      <form class="search-form" id="search-form">
+        <div class="form-wrap">
+          <input
+            type="text"
+            name="query"
+            autocomplete="off"
+            placeholder="Search images..."
+          />
+          <select name="select" id="" class="select">
+            <option value="all">all</option>
+            <option value="photo">photo</option>
+            <option value="illustration">illustration</option>
+            <option value="vector">vector</option>
+          </select>
+        </div>
+      </form>
+      <ul class="gallery"></ul>
+      <button type="button" class="btn is-hidden" data-action="load-more">
+        <span
+          class="spinner-border spinner-border-sm spiner is-hidden"
+          role="status"
+          aria-hidden="true"
+        >
+        </span>
+        <span class="label">Load More</span>
+      </button>
     </div>
-    <div class="country__container"></div>
   </body>
 </html>
