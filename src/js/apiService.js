@@ -1,10 +1,5 @@
 // https://pixabay.com/api/?image_type=photo&orientation=horizontal&q=что_искать&page=номер_страницы&per_page=12&key=твой_ключ
 import error from './pnotify'
-// ==
-const KEY = "21828776-3a3234db6b008ce4834511463";
-const URL = 'https://pixabay.com/api/';
-const TUNING = 'image_type=photo&orientation=horizontal';
-
 export default class ApiService {
     constructor() {
         this.page = 1;
@@ -13,12 +8,15 @@ export default class ApiService {
 
     };
 
-    async requestOnUrl() {
+    async fetchContent() {
+        const KEY = "21828776-3a3234db6b008ce4834511463";
+        const URL = 'https://pixabay.com/api/';
+        const TUNING = 'image_type=photo&orientation=horizontal';
         try {
-            const mainIncvery = await fetch(`${URL}?${TUNING}&q=${this.searchQuery}&page=${this.page}&per_page=12&key=${KEY}`)
-            const inquiry = await mainIncvery.json();
+            const queryFetch = await fetch(`${URL}?${TUNING}&q=${this.searchQuery}&page=${this.page}&per_page=12&key=${KEY}`)
+            const result = await queryFetch.json();
             this.increment();
-            return inquiry;
+            return result;
         } catch {
             return error();
         }
@@ -33,5 +31,15 @@ export default class ApiService {
     resetPage() {
         this.page = 1
     }
+
+
+    get query() {
+        return this.inputValueData;
+    }
+
+    set query(value) {
+        this.inputValueData = value;
+    }
+
 
 }
