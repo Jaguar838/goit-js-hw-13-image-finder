@@ -1,146 +1,88 @@
-import ApiService from './apiService';
 import cardImgTMPL from '../templates/photoCardMarkup.hbs';
-import debounce from 'lodash.debounce';
-
-import error from './pnotify';
-import loadMoreBtn from './load-more-btn';
+import ApiService from './apiService';
+import loadMoreBtn from './loadMoreBtn';
 import createModal from './modal';
-
-// Отправляем запрос на сервер
-const apiService = new ApiService;
+import {
+    alertNoMoreImages,
+    alertLastImages,
+    alertSeachPerformed,
+    alertUnforseenError,
+    alertBadQuery,
+  } from './pnotify';
 
 const imgCardRef = document.querySelector('.gallery');
 const searchFormRef = document.querySelector('#search-form');
 const headerFormRef = document.querySelector('.search-form__header');
 const loadMoreBtnRef = document.querySelector('[data-action="load-more"]');
-
+const bottomElement = document.querySelector('.bottom-element');
+const API = new ApiService();
 
 searchFormRef.addEventListener('submit', hendlerInput);
 loadMoreBtnRef.addEventListener('click', getFetchData);
 imgCardRef.addEventListener('click', handleOpenModal);
 
 
-
-
-
-
-function renderingImgCard(hits) {
-  if (hits.length !== 0) {
-    imgCardRef.insertAdjacentHTML('beforeend', cardImgTMPL(hits));
-    loadMoreBtn.show();
-    loadMoreBtn.enable();
-
-    if (hits.length < 12) {
-      headerFormRef.innerHTML = 'There are no more images in this category. Choose another search term';
-      loadMoreBtn.hide();
-    }
-
-    if (apiService.page > 2) {
-      window.scrollTo({
-        top: document.documentElement.offsetHeight - 100,
-      });
-    }
-  } else {
-    error404()
-  }
+function hendlerInput(e){    
+        e.preventDefault();                
+        API.resetPage();
+        API.query = e.currentTarget.query.value.trim();  
+        API.selectData = e.currentTarget.select.value;
+        clearInput();  
+        API.searchQuery ? getFetchData() : alertBadQuery();
 }
 
-function error404(err) {
-  clearInput();
-  loadMoreBtn.hide();
-  const message = 'Не корректный запрос. Повторите попытку еще раз';
-  headerFormRef.innerHTML = message;
-  headerFormRef.classList.add('red');
+function getFetchData(){ 
+    loadMoreBtn.disable();
+    API.fetchContent().then(img => {
+        renderingImgCard(img); 
+    })
+    .catch(error404)    
 }
 
-function clearInput() {
-  searchFormRef.query.value = '';
-  headerFormRef.innerHTML = '';
-  imgCardRef.innerHTML = '';
+function renderingImgCard(hits){ 
+    if(hits.length !== 0) {
+        imgCardRef.insertAdjacentHTML('beforeend', cardImgTMPL(hits));
+        loadMoreBtn.show();                
+        loadMoreBtn.enable();
+
+        if(hits.length < 12) {
+            headerFormRef.innerHTML = 'There are no more images in this category. Choose another search term';
+            loadMoreBtn.hide(); 
+        }
+
+        if(API.currentPage > 2) {
+            toBottom();
+        }                 
+    } else{               
+        alertNoMoreImages()
+    }
+}
+
+function error404(){ 
+    clearInput();     
+    loadMoreBtn.hide();  
+    headerFormRef.innerHTML = 'Specify the request more correctly';
+    headerFormRef.classList.add('red');
+}
+
+function clearInput() {  
+    searchFormRef.query.value = '';   
+    headerFormRef.innerHTML = ''; 
+    imgCardRef.innerHTML = '';     
 }
 
 function handleOpenModal(event) {
-  if (event.target.nodeName !== 'IMG') {
-    return;
+    if (event.target.nodeName !== 'IMG') {
+      return;
+    }    
+    const largeImageURL = event.target.dataset.source;  
+    createModal(largeImageURL);
   }
-  const largeImageURL = event.target.dataset.source;
-  createModal(largeImageURL);
-}
 
-// function error404() {
-//   clearInput();
-//   loadMoreBtn.hide();
-//   headerFormRef.innerHTML = 'Specify the request more correctly';
-//   headerFormRef.classList.add('red');
-// }
-// #####################################################
-// refs.input.addEventListener(
-//   'input',
-//   debounce(handleGenerateListFromResponse, 1000),
-// );
-
-// // Забираем значение с input
-// function handleGenerateListFromResponse(event) {
-//   let inputValue = event.target.value.trim();
-//   clearContent();
-//   if (!inputValue) {
-//     error404();
-//     return;
-//   }
-
-//   getCountriesList(inputValue)
-// }
-
-// // Создаем разметку страны по шаблону hbs
-// function addFullCoutryInfo(country) {
-//   const markup = countriesMarkupTMPT(country);
-
-//   //   Добавляем новую разметку страны
-//   refs.countryContainer.insertAdjacentHTML('beforeend', markup);
-// }
-
-// function clearContent() {
-//   refs.inputMessage.innerHTML = '';
-//   refs.inputList.innerHTML = '';
-//   refs.countryContainer.innerHTML = '';
-// }
-
-// // Выводим значение в зависимости от полученного к-ва стран
-// function selectTypeOutputInfo(numberOfCountries) {
-//   console.log(numberOfCountries);
-
-//   if (numberOfCountries.length < 2) {
-//     addFullCoutryInfo(numberOfCountries);
-//   }
-
-//   if (numberOfCountries.length >= 2 && numberOfCountries.length <= 10) {
-//     numberOfCountries.forEach(country => {
-//       refs.inputList.insertAdjacentHTML('beforeend', `<li>${country.name}</li>`)
-//     });
-
-//     refs.inputList.addEventListener('click', e => {
-//       clearContent();
-//       const getInputValue = refs.input.value = e.target.textContent;
-//       const country = numberOfCountries.find(country => {
-//         return country.name === getInputValue
-//       })
-//       addFullCoutryInfo({ country });
-//     })
-//   }
-
-//   if (numberOfCountries.length > 10) {
-//     const message = 'Найдено слишком много совпадений, уточните ваш запрос'
-//     refs.inputMessage.insertAdjacentHTML('beforeend', message);
-//     error({
-//       title: 'Ошибка',
-//       text: message,
-//       delay: 2000,
-//     });
-//   }
-// }
-
-// function getCountriesList(value) {
-//   fetchCountries(value)
-//     .then(countries => selectTypeOutputInfo(countries))
-//     .catch(error => error404(error));
-// }
+  function toBottom() {
+    console.log(bottomElement);
+    bottomElement.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+  }
