@@ -54,23 +54,3 @@ export default class ApiService {
         this.searchQuery = newQuery;
     }
 }
-
-    increment() {
-        this.page += 1;
-    }
-
-    resetPage() {
-        this.page = 1
-    }
-
-
-    get query() {
-        return this.inputValueData;
-    }
-
-    set query(value) {
-        this.inputValueData = value;
-    }
-
-
-}
