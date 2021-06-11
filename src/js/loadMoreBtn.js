@@ -3,13 +3,13 @@ const loadMoreBtnLabelRef = document.querySelector('[data-action="load-more"] > 
 const spinerRef = document.querySelector('.spiner');
 
 const loadMoreBtn = {
-    enable() {
+    enable(){
         loadMoreBtnRef.disabled = false;
         loadMoreBtnLabelRef.textContent = 'Load More';
         spinerRef.classList.add('is-hidden');
     },
 
-    disable() {
+    disable(){
         loadMoreBtnRef.disabled = true;
         loadMoreBtnLabelRef.textContent = 'Load...';
         spinerRef.classList.remove('is-hidden');
@@ -19,7 +19,7 @@ const loadMoreBtn = {
         loadMoreBtnRef.classList.remove('is-hidden');
     },
 
-    hide() {
+    hide(){
         loadMoreBtnRef.classList.add('is-hidden');
     }
 };
