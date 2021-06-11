@@ -2,12 +2,10 @@ import cardImgTMPL from '../templates/photoCardMarkup.hbs';
 import ApiService from './apiService';
 import loadMoreBtn from './loadMoreBtn';
 import createModal from './modal';
-import debounce from 'lodash.debounce';
 import {
     alertNoMoreImages,
     alertLastImages,
     alertSeachPerformed,
-    alertUnforseenError,
     alertBadQuery,
 } from './pnotify';
 
