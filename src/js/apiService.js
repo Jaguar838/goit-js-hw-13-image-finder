@@ -22,20 +22,11 @@ export default class ApiService {
     fetchContent() {          
          const url = `${URL}?${TUNING}&q=${this.searchQuery}&image_type=${this.selectData}&page=${this.currentPage}&per_page=12&key=${KEY}`
         return fetch(url).then(res => res.json()).then(({hits}) => {
-            this.currentPage += 1;            
+            this.icrementPage();            
             return hits;
         });
     }
 
-    // async fetchContent() {       
-    //     try {
-    //         const queryFetch = await fetch(`${URL}?${TUNING}&q=${this.searchQuery}&page=${this.currentPage}&per_page=12&key=${KEY}`)
-    //         const result = await queryFetch.json();
-    //         return result;
-    //     } catch {
-    //         return alertBadQuery();
-    //     }
-    // }
 
     incrementPage() {
         this.currentPage += 1;
