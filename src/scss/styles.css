@@ -177,7 +177,7 @@ input[type='radio'].visually-hidden {
 
 .search-form input::placeholder {
   transition: all 0.2s linear;
-  color: #fff;
+  color: rgb(97, 95, 95);
 }
 
 .search-form input:focus::placeholder {
